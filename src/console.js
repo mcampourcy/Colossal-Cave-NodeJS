@@ -1,25 +1,32 @@
-import readline from 'readline'
+import readline from "readline"
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 })
 
-export function consoleInput(question, cb) {
-    rl.question(question, (answer) => {
-        rl.resume()
-        cb(answer)
+export function ask(question, noFormat = false) {
+    const formattedQuestion = noFormat ? `> ` : `\n${question}\n\n> `
+
+    return new Promise((resolve) => {
+        rl.question(formattedQuestion, (answer) => resolve(answer))
     })
 }
 
-export function displayText(string) {
-    console.log(`\n${string}\n\n`)
+export function print(text = "") {
+    console.log(text)
 }
 
-export function displayLine(string) {
-    console.log(`\n${string}\n`)
+export function println(text = "") {
+    console.log(`\n${text}\n`)
 }
 
-export function format(string) {
-    return `\n${string}\n\n`
+export function close() {
+    rl.close()
 }
+
+process.on("SIGINT", () => {
+    println("Goodbye!")
+    close()
+    process.exit(0)
+})

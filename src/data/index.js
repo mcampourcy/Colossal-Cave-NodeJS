@@ -1,7 +1,7 @@
-export { actions } from './actions.js'
-export { directions } from './directions.js'
-export { locations } from './locations.js'
-export { messages } from './messages.js'
-export { objects } from './objects.js'
-export { settings } from './settings.js'
-export { sounds } from './sounds.js'
+export { actions } from "./actions.js"
+export { directions } from "./directions.js"
+export { locations } from "./locations.js"
+export { messages } from "./messages.js"
+export { objects } from "./objects.js"
+export { settings } from "./settings.js"
+export { sounds } from "./sounds.js"

@@ -1,56 +1,36 @@
 {
   "name": "test-if",
   "version": "1.0.0",
-  "description": "",
-  "main": "bin/adventure.js",
+  "description": "Interactive fiction in the terminal (Node.js CLI).",
   "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "adventure": "./bin/adventure.js"
+  },
+  "files": [
+    "bin/",
+    "src/"
+  ],
   "engines": {
     "node": ">=21"
   },
   "scripts": {
+    "start": "node ./bin/adventure.js",
     "lint": "eslint --ext js src",
-    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest"
+    "test": "vitest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "chalk": "^5.6.0",
-    "concat-stream": "^2.0.0",
-    "esm": "^3.2.25",
-    "figlet": "^1.8.2",
-    "fs-extra": "^11.3.1",
-    "jest": "^30.0.5",
-    "readline": "^1.3.0",
-    "shelljs": "^0.10.0"
-  },
-  "bin": {
-    "adventure": "./bin/adventure.js"
+    "chalk": "^5.3.0",
+    "figlet": "^1.7.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.3",
-    "@babel/preset-env": "^7.28.3",
-    "babel-jest": "^30.0.5",
-    "babel-plugin-transform-import-meta": "^2.3.3",
+    "@eslint/js": "^9.34.0",
+    "@stylistic/eslint-plugin": "^5.2.3",
     "eslint": "^9.34.0",
-    "eslint-plugin-import": "^2.32.0"
-  },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
-  "jest": {
-    "testMatch": [
-      "**/tests/**/?(*.)+(e2e).js?(x)"
-    ],
-    "transform": {
-      "\\.js$": [
-        "babel-jest",
-        {
-          "configFile": "./babel.config.cjs"
-        }
-      ]
-    }
+    "globals": "^16.3.0",
+    "prettier": "3.6.2",
+    "vitest": "^3.2.4"
   }
 }

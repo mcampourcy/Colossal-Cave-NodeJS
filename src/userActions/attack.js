@@ -1,24 +1,24 @@
-import { format } from '../console.js'
-import { actions, messages } from '../data/index.js'
+import { println } from "../console.js"
+import { actions, messages } from "../data/index.js"
 import {
     destroyObject,
     getObjectByWord,
     getObjectFromCurrentLocation,
     getObjectFromLocationOrInventory,
     updateObjectState,
-} from '../object.js'
+} from "../object.js"
 
 // ATTACK. ASSUME TARGET IF UNAMBIGUOUS. "THROW" ALSO LINKS HERE. ATTACKABLE
 // OBJECTS FALL INTO TWO CATEGORIES: ENEMIES (SNAKE, DWARF, ETC.) AND OTHERS (BIRD, CLAM).
 // AMBIGUOUS IF TWO ENEMIES, OR IF NO ENEMIES BUT TWO OTHERS.
 
 export function attack(param, actionId) {
-    const bird = getObjectFromLocationOrInventory('bird')
-    const clam = getObjectFromCurrentLocation('clam')
-    const oyster = getObjectFromCurrentLocation('oyster')
-    const ogre = getObjectFromCurrentLocation('ogre')
-    const snake = getObjectFromCurrentLocation('snake')
-    const vendingMachine = getObjectFromCurrentLocation('vend')
+    const bird = getObjectFromLocationOrInventory("bird")
+    const clam = getObjectFromCurrentLocation("clam")
+    const oyster = getObjectFromCurrentLocation("oyster")
+    const ogre = getObjectFromCurrentLocation("ogre")
+    const snake = getObjectFromCurrentLocation("snake")
+    const vendingMachine = getObjectFromCurrentLocation("vend")
     let changes = 0
     let obj = getObjectByWord(param)
 
@@ -29,12 +29,12 @@ export function attack(param, actionId) {
         }
 
         // Can't attack bird or machine by throwing axe
-        if (bird && actionId !== 'throw') {
+        if (bird && actionId !== "throw") {
             obj = bird
             changes += 1
         }
 
-        if (vendingMachine && actionId !== 'throw') {
+        if (vendingMachine && actionId !== "throw") {
             obj = vendingMachine
             changes += 1
         }
@@ -69,18 +69,18 @@ export function attack(param, actionId) {
     }
 
     if (obj === bird) {
-        // if (game.closed) {
-        //   rspeak(UNHAPPY_BIRD);
-        destroyObject('bird')
+    // if (game.closed) {
+    //   rspeak(UNHAPPY_BIRD);
+        destroyObject("bird")
         return messages.birdDead
     }
 
     if (obj === vendingMachine) {
         const state = updateObjectState(
-            'vend',
-            vendingMachine.currentState === 'vendBlocks'
-                ? 'vendUnblocks'
-                : 'vendBlocks',
+            "vend",
+            vendingMachine.currentState === "vendBlocks"
+                ? "vendUnblocks"
+                : "vendBlocks",
         )
         return state.change
     }
@@ -132,43 +132,43 @@ export function attack(param, actionId) {
     // }
 
     if (obj === ogre) {
-        return format(messages.ogreDodge)
-        //   if (atdwrf(game.loc) == 0)
-        //     return GO_CLEAROBJ;
-        //
-        //   rspeak(KNIFE_THROWN);
-        //   DESTROY(OGRE);
-        //   int dwarves = 0;
-        //   for (int i = 1; i < PIRATE; i++) {
-        //     if (game.dloc[i] == game.loc) {
-        //       ++dwarves;
-        //       game.dloc[i] = LOC_LONGWEST;
-        //       game.dseen[i] = false;
-        //     }
-        //   }
-        //   rspeak((dwarves > 1) ?
-        //     OGRE_PANIC1 :
-        //     OGRE_PANIC2);
+        return println(messages.ogreDodge)
+    //   if (atdwrf(game.loc) == 0)
+    //     return GO_CLEAROBJ;
+    //
+    //   rspeak(KNIFE_THROWN);
+    //   DESTROY(OGRE);
+    //   int dwarves = 0;
+    //   for (int i = 1; i < PIRATE; i++) {
+    //     if (game.dloc[i] == game.loc) {
+    //       ++dwarves;
+    //       game.dloc[i] = LOC_LONGWEST;
+    //       game.dseen[i] = false;
+    //     }
+    //   }
+    //   rspeak((dwarves > 1) ?
+    //     OGRE_PANIC1 :
+    //     OGRE_PANIC2);
     }
 
     if (!obj) return messages.noTarget
 
     switch (obj.id) {
-    case 'clam':
-    case 'oyster':
-        return messages.shellImpervious
-    case 'snake':
-        return messages.snakeWarning
-    case 'dwarf':
+        case "clam":
+        case "oyster":
+            return messages.shellImpervious
+        case "snake":
+            return messages.snakeWarning
+        case "dwarf":
         // if (game.closed) return GO_DWARFWAKE
         // rspeak(BARE_HANDS_QUERY)
-        break
-    case 'dragon':
-        return messages.alreadyDead
-    case 'troll':
-        return messages.rockyTroll
-    default:
-        return actions[actionId].message
+            break
+        case "dragon":
+            return messages.alreadyDead
+        case "troll":
+            return messages.rockyTroll
+        default:
+            return actions[actionId].message
     }
 
     return null

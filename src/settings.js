@@ -1,4 +1,4 @@
-import { settings } from './data/index.js'
+import { settings } from "./data/index.js"
 
 export function manageLocationsHistory(newLocation) {
     const { currentLocation, previousLocation } = settings

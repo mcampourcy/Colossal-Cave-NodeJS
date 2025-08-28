@@ -1,16 +1,16 @@
-import { messages, settings } from '../data/index.js'
-import { inventory } from './inventory.js'
-import { cageTheBird, getTheBird } from '../bird.js'
-import { addObjectToInventory, isObjectInInventory } from '../inventory.js'
-import { getCurrentLocation } from '../locations.js'
+import { messages, settings } from "../data/index.js"
+import { inventory } from "./inventory.js"
+import { cageTheBird, getTheBird } from "../bird.js"
+import { addObjectToInventory, isObjectInInventory } from "../inventory.js"
+import { getCurrentLocation } from "../locations.js"
 import {
     getObjectFromCurrentLocation,
     isObjectALiquid,
     updateObjectState,
-} from '../object.js'
-import { getObjectsList } from '../objects.js'
-import { getAction } from './utils.js'
-import { fill } from './fill.js'
+} from "../object.js"
+import { getObjectsList } from "../objects.js"
+import { getAction } from "./utils.js"
+import { fill } from "./fill.js"
 
 export function carry(param, actionId, verb) {
     const { inventoryLimit } = settings
@@ -40,25 +40,25 @@ export function carry(param, actionId, verb) {
 
     // "take water / oil"
     if (isObjectALiquid(obj.id)) {
-        const bottle = getObjectFromCurrentLocation('bottle')
-            || isObjectInInventory('bottle')
+        const bottle =
+      getObjectFromCurrentLocation("bottle") || isObjectInInventory("bottle")
 
         if (!bottle) return messages.noContainer
-        if (getObjectFromCurrentLocation('bottle')) addObjectToInventory(obj.id)
-        if (bottle.currentState === 'fullBottle') return messages.bottleFull
+        if (getObjectFromCurrentLocation("bottle")) addObjectToInventory(obj.id)
+        if (bottle.currentState === "fullBottle") return messages.bottleFull
 
         return fill({ objectToFill: obj, actionId })
     }
 
-    if (obj.id === 'bird') return getTheBird(obj)
+    if (obj.id === "bird") return getTheBird(obj)
 
-    if (obj.id === 'bottle' && conditions.fluid) {
+    if (obj.id === "bottle" && conditions.fluid) {
         addObjectToInventory(obj.id)
 
-        if (obj.currentState === 'emptyBottle') {
+        if (obj.currentState === "emptyBottle") {
             const bottleState = updateObjectState(
                 obj.id,
-                conditions.oily ? 'oilBottle' : 'waterBottle',
+                conditions.oily ? "oilBottle" : "waterBottle",
             )
             return `${bottleState.change}\n${messages.okMan}`
         }
@@ -67,8 +67,8 @@ export function carry(param, actionId, verb) {
     }
 
     if (
-        (obj.id === 'cage' && getObjectFromCurrentLocation('bird'))
-        || (obj.id === 'bird' && verb === 'cage')
+        (obj.id === "cage" && getObjectFromCurrentLocation("bird")) ||
+    (obj.id === "bird" && verb === "cage")
     ) {
         return cageTheBird(obj, verb)
     }

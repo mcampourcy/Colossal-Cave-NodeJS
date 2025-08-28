@@ -1,13 +1,11 @@
-import {
-    directions, locations, messages, settings,
-} from './data/index.js'
-import { format } from './console.js'
-import { getObjectsDescription } from './objects.js'
-import { manageLocationsHistory } from './settings.js'
-import { pct } from './global.js'
-import { getLocationLight } from './light.js'
+import { directions, locations, messages, settings } from "./data/index.js"
+import { getObjectsDescription } from "./objects.js"
+import { manageLocationsHistory } from "./settings.js"
+import { pct } from "./start.js"
+import { getLocationLight } from "./light.js"
 
 export function getCurrentLocation() {
+    console.log("CURRENT")
     return locations.find(({ id }) => id === settings.currentLocation)
 }
 
@@ -15,41 +13,39 @@ function isSpecial(location) {
     return /^locFoof/.test(location)
 }
 
-export function getLocationDescription(forceLong = false) {
+export function getCurrentLocationDescription({
+    currentLocation,
+    forceLong = false,
+}) {
     const { previousPreviousLocation, repeat } = settings
-    const currentLocation = getCurrentLocation()
     const isLocationLight = getLocationLight(currentLocation)
-    let description = ''
+    let description = ""
 
     if (isSpecial(currentLocation.id)) {
         description += `${currentLocation.description.long}\n`
-        manageLocationsHistory(currentLocation.travels[0].action.description)
+        manageLocationsHistory(currentLocation.actions[0].description)
     }
 
     const {
         description: { long, short },
-        id: current,
-        travels,
+        id: currentId,
     } = currentLocation
 
     // The player came here two moves ago
-    // e.g. : locStart => locBuilding => locStart
-    const turnAround = current === previousPreviousLocation
+    // e.g.: locStart => locBuilding => locStart
+    const turnAround = currentId === previousPreviousLocation
 
     if (isLocationLight) {
         const objectsDescription = getObjectsDescription(
             currentLocation,
             isLocationLight,
         )
-        const routesFromLocation = getRoutesFromLocation()
+
         const hasShortDescription = short && !forceLong
+        description += hasShortDescription && (repeat || turnAround) ? short : long
 
-        description
-            += hasShortDescription && (repeat || turnAround) ? short : long
-
-        if (!routesFromLocation.length) manageLocationsHistory(travels[0].action.description)
-
-        if (current === 'y2' && pct(25)) description += `\n ${messages.saysPlugh}`
+        if (currentId === "y2" && pct(25))
+            description += `\n ${messages.saysPlugh}`
 
         return objectsDescription.length
             ? `${description}\n${objectsDescription}`
@@ -65,21 +61,20 @@ export function getLocationDescription(forceLong = false) {
 
 export function getFluidConditions() {
     const { conditions } = getCurrentLocation()
-    if (conditions.fluid) return conditions.oily ? 'oil' : 'water'
+    if (conditions.fluid) return conditions.oily ? "oil" : "water"
 
     return null
 }
 
-export function getRoutesFromLocation() {
-    const { travels } = getCurrentLocation()
-    const travelsVerbs = travels.map(({ verbs }) => verbs).flat()
-    // get dictionary from travels ids
-    return travelsVerbs
-        .map((travel) => directions.find(({ id }) => id === travel).verbs)
+export function getRoutesFromCurrentLocation(currentLocation) {
+    return currentLocation.actions
+        .map((action) => {
+            if (action.id === "goTo") return action.verbs
+        })
         .flat()
 }
 
-export function getTravel(answer) {
+export function getTravel({ answer, currentLocation }) {
     const { travels } = getCurrentLocation()
     const direction = directions.find(({ verbs }) => verbs.includes(answer))
     return travels.find(({ verbs }) => verbs.includes(direction.id)).action

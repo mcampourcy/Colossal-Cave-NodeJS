@@ -1,58 +1,49 @@
-import { actions, messages } from '../data/index.js'
-import { getFluidConditions } from '../locations.js'
-import { addObjectToInventory, isObjectInInventory } from '../inventory.js'
-import {
-    getObjectFromCurrentLocation,
-    getObjectByWord,
-    getObjectState,
-    updateObjectState,
-} from '../object.js'
+import { messages, objects, settings } from "../data/index.js"
+import { println } from "../console.js"
+import { addObjectToInventory, isObjectInInventory } from "../inventory.js"
+import { updateObjectState } from "../object.js"
 
-/*  Drink.  If no object, assume water and look for it here.  If water is in
- *  the bottle, drink that, else must be at a water loc, so drink stream. */
-export function drink(param, actionId) {
-    const fluid = getFluidConditions()
-    const isBottleHere = getObjectFromCurrentLocation('bottle')
-    const isBottleInInventory = isObjectInInventory('bottle')
-    const isParamWater = getObjectByWord(param)
+export function drink({ action, object, currentLocation }) {
+    const { fluid, oily } = currentLocation
+    const isParamWater = object?.id === "water"
 
-    if (!param && fluid !== 'water' && !isBottleHere && !isBottleInInventory) {
+    // Validations d'entrée
+    if ((fluid && oily) || (object && !isParamWater)) {
+        return messages.ridiculousAttempt
+    }
+
+    const bottle = objects.find(({ locations, words }) =>
+        locations.includes(currentLocation.id) && words.includes("bottle")
+    )
+    const isBottleInInventory = isObjectInInventory("bottle")
+
+    if (!fluid && oily && !bottle && !isBottleInInventory) {
         return messages.noLiquid
     }
 
-    if (!param && isBottleHere) {
-        const hasBottleWater = getObjectState('bottle').id === 'waterBottle'
-        if (hasBottleWater) {
-            addObjectToInventory('bottle')
-            return updateObjectState('bottle', 'emptyBottle').change
-        }
-    }
+    // Cas principal : boire depuis une bouteille présente
+    if (!object && bottle) {
+        const isBottleFullOfWater = bottle.currentState === "waterBottle"
 
-    // if (obj == BLOOD) {
-    //   DESTROY(BLOOD);
-    //   state_change(DRAGON, DRAGON_BLOODLESS);
-    //   game.blooded = true;
-    //   return GO_CLEAROBJ;
-    // }
-
-    if (param) {
-        if (!isParamWater) {
-            return messages.ridiculousAttempt
-        }
-
-        if (isParamWater && (isBottleHere || isBottleInInventory)) {
-            // if (!isBottleInInventory) {
-            //     return addObjectToInventory(param)
-            // }
-
-            const hasBottleWater = getObjectState(param).id === 'waterBottle'
-            if (hasBottleWater) {
-                return updateObjectState(param, 'emptyBottle')
-            }
-
+        if (!isBottleFullOfWater) {
             return messages.noLiquid
         }
+
+        if (!isBottleInInventory) {
+            addObjectToInventory("bottle")
+        }
+
+        const newState = updateObjectState("bottle", "emptyBottle")
+        println(newState.change)
+        return null
     }
 
-    return actions.find(({ id }) => id === actionId).message
+    return action.message
 }
+// if (obj == BLOOD) {
+//     DESTROY(BLOOD);
+//     state_change(DRAGON, DRAGON_BLOODLESS);
+//     game.blooded = true;
+//     return GO_CLEAROBJ;
+// }
+//

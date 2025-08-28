@@ -1,11 +1,11 @@
-import { getObjectFromLocationOrInventory } from './object.js'
+import { getObjectFromLocationOrInventory } from "./object.js"
 
 export function getLocationLight(currentLocation) {
     const { conditions } = currentLocation
-    const lamp = getObjectFromLocationOrInventory('lamp')
+    const lamp = getObjectFromLocationOrInventory("lamp")
 
     return (
-        (conditions && conditions.lit)
-        || (lamp && lamp.currentState === 'lampBright')
+        (conditions && conditions.lit) ||
+    (lamp && lamp.currentState === "lampBright")
     )
 }

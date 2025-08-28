@@ -1,5 +1,5 @@
-import { messages, objects, settings } from './data/index.js'
-import { isObjectInInventory } from './inventory.js'
+import { messages, objects, settings } from "./data/index.js"
+import { isObjectInInventory } from "./inventory.js"
 
 export function getObjectsDescription(location, isLocationLight) {
     const { id: currentLocation } = location
@@ -9,8 +9,8 @@ export function getObjectsDescription(location, isLocationLight) {
 
         objects.forEach((object) => {
             if (
-                object.locations.includes(currentLocation)
-                && !isObjectInInventory(object.id)
+                object.locations.includes(currentLocation) &&
+        !isObjectInInventory(object.id)
             ) {
                 if (object.states) {
                     const current = object.states.find(
@@ -25,37 +25,41 @@ export function getObjectsDescription(location, isLocationLight) {
                 }
 
                 if (object.descriptions) {
-                    const objDescription = object.descriptions[
-                        object.locations.indexOf(currentLocation)
-                    ]
+                    const objDescription =
+            object.descriptions[object.locations.indexOf(currentLocation)]
                     description.push(objDescription)
                 }
             }
         })
-        return description.join('\n')
+        return description.join("\n")
     }
 
     return messages.pitchDark
 }
 
 export function getObjectsList() {
-    return objects.filter(({ locations }) => locations.includes(settings.currentLocation))
+    return objects.filter(({ locations }) =>
+        locations.includes(settings.currentLocation),
+    )
 }
 
-export function getObjectsSound() {
-    const { currentLocation, inventory } = settings
+/**
+ * Retrieves the sounds of objects at the current location that are not already in the inventory.
+ *
+ * @param {string} currentLocationId - The ID of the current location to search for objects.
+ * @return {string} A concatenated string of sounds from objects in the current location that meet the criteria.
+ */
+export function getObjectsSound(currentLocationId) {
+    const { inventory } = settings
     const description = []
+
     objects.forEach(({ locations, id, states }) => {
         const alreadyInInventory = inventory.find((obj) => obj.id === id)
-        if (
-            locations.includes(currentLocation)
-            && !alreadyInInventory
-            && states
-        ) {
+        if (locations.includes(currentLocationId) && !alreadyInInventory && states) {
             description.push(states[0].sound)
         }
     })
-    return description.join('\n')
+    return description.join("\n")
 }
 
 export function updateObjectsList(object) {

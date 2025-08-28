@@ -1,19 +1,22 @@
-import { actions, messages, settings } from '../data/index.js'
-import { isObjectInInventory, removeObjectFromInventory } from '../inventory.js'
-import { getFluidConditions } from '../locations.js'
-import { getObjectFromCurrentLocation, updateObjectState } from '../object.js'
+import { actions, messages, settings } from "../data/index.js"
+import {
+    isObjectInInventory,
+    removeObjectFromInventory,
+} from "../inventory.js"
+import { getFluidConditions } from "../locations.js"
+import { getObjectFromCurrentLocation, updateObjectState } from "../object.js"
 
 export function fill({ objectToFill, actionId, verb }) {
     const obj = getObjectFromCurrentLocation(objectToFill)
     const isInInvent = isObjectInInventory(obj.id)
     const fluid = getFluidConditions()
-    const bottle = getObjectFromCurrentLocation('bottle')
+    const bottle = getObjectFromCurrentLocation("bottle")
 
-    if (obj.id === 'vase') {
+    if (obj.id === "vase") {
         if (!fluid) return messages.fillInvalid
         if (!isInInvent) return messages.arentCarrying
 
-        const state = updateObjectState(obj.id, 'vaseBroken')
+        const state = updateObjectState(obj.id, "vaseBroken")
         obj.locations = [settings.currentLocation]
         removeObjectFromInventory(obj.id)
         return `${state.change}\n${messages.shatterVase}`
@@ -22,7 +25,7 @@ export function fill({ objectToFill, actionId, verb }) {
     if (!fluid) return messages.noLiquid
 
     // Fill what ?
-    if (obj.id !== 'bottle') {
+    if (obj.id !== "bottle") {
         return actions.find(({ id }) => id === actionId).message
     }
 
@@ -30,7 +33,7 @@ export function fill({ objectToFill, actionId, verb }) {
     if (!bottle) return messages.doWhat(verb)
 
     // Bottle full
-    if (bottle.currentState !== 'emptyBottle') {
+    if (bottle.currentState !== "emptyBottle") {
         return messages.bottleFull
     }
 

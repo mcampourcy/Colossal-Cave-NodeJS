@@ -1,46 +1,46 @@
-import { actions, messages, settings } from '../data/index.js'
-import { isObjectInInventory } from '../inventory.js'
+import { actions, messages, settings } from "../data/index.js"
+import { isObjectInInventory } from "../inventory.js"
 import {
     getObjectByWord,
     getObjectFromCurrentLocation,
     updateObjectState,
-} from '../object.js'
-import { isTreasureFound } from '../treasure.js'
+} from "../object.js"
+import { isTreasureFound } from "../treasure.js"
 
 // Wave - No effect unless waving rod at fissure or at bird
 export function wave(param, actionId) {
     const isInInventory = isObjectInInventory(param)
-    const bird = getObjectFromCurrentLocation('bird') || isObjectInInventory('bird')
-    const fissure = getObjectFromCurrentLocation('fissure')
-    const rod2InInventory = isObjectInInventory('rod2')
-    const steps = getObjectFromCurrentLocation('steps')
+    const bird =
+    getObjectFromCurrentLocation("bird") || isObjectInInventory("bird")
+    const fissure = getObjectFromCurrentLocation("fissure")
+    const rod2InInventory = isObjectInInventory("rod2")
+    const steps = getObjectFromCurrentLocation("steps")
 
-    if (param !== 'rod' || !isInInventory || (!bird && !fissure)) {
-        if (!isInInventory && (param !== 'rod' || !rod2InInventory)) {
+    if (param !== "rod" || !isInInventory || (!bird && !fissure)) {
+        if (!isInInventory && (param !== "rod" || !rod2InInventory)) {
             return messages.arentCarrying
         }
         return actions[actionId].message
     }
 
     if (
-        bird.currentState === 'birdUncaged'
-        && steps
-        && !isTreasureFound('jade')
+        bird.currentState === "birdUncaged" &&
+    steps &&
+    !isTreasureFound("jade")
     ) {
-        const treasure = getObjectByWord('jade')
+        const treasure = getObjectByWord("jade")
         treasure.locations = [settings.currentLocation]
         return messages.necklaceFly
     }
 
     if (bird) {
-        let description = bird.currentState === 'birdCaged'
-            ? messages.cageFly
-            : messages.freeFly
+        let description =
+      bird.currentState === "birdCaged" ? messages.cageFly : messages.freeFly
 
         if (fissure) {
             const state = updateObjectState(
-                'fissure',
-                fissure.currentState === 'bridged' ? 'unbridged' : 'bridged',
+                "fissure",
+                fissure.currentState === "bridged" ? "unbridged" : "bridged",
             )
             description += `\n${state.change}`
         }

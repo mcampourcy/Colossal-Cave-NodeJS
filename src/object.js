@@ -1,15 +1,15 @@
-import { objects, settings } from './data/index.js'
+import { objects, settings } from "./data/index.js"
 import {
     isObjectInInventory,
     removeObjectFromInventory,
     updateInventory,
-} from './inventory.js'
-import { updateObjectsList } from './objects.js'
+} from "./inventory.js"
+import { updateObjectsList } from "./objects.js"
 
 export function destroyObject(object) {
     removeObjectFromInventory(object.id)
     const newObject = object
-    newObject.locations = ['locNowhere']
+    newObject.locations = ["locNowhere"]
     updateObjectsList(newObject)
     return newObject
 }
@@ -39,7 +39,8 @@ export function getObjectFromLocationOrInventory(name) {
 
 export function getObjectFromCurrentLocation(name) {
     return objects.find(
-        ({ locations, words }) => locations.includes(settings.currentLocation) && words.includes(name),
+        ({ locations, words }) =>
+            locations.includes(settings.currentLocation) && words.includes(name),
     )
 }
 
@@ -49,8 +50,8 @@ export function getObjectState(objId) {
 }
 
 export function isObjectALiquid(objectId) {
-    const water = objects.find(({ id }) => id === 'water')
-    const oil = objects.find(({ id }) => id === 'oil')
+    const water = objects.find(({ id }) => id === "water")
+    const oil = objects.find(({ id }) => id === "oil")
     return [...water.words, ...oil.words].includes(objectId)
 }
 

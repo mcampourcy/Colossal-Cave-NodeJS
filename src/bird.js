@@ -1,21 +1,21 @@
-import { messages } from './data/index.js'
-import { addObjectToInventory, isObjectInInventory } from './inventory.js'
+import { messages } from "./data/index.js"
+import { addObjectToInventory, isObjectInInventory } from "./inventory.js"
 import {
     destroyObject,
     getObjectFromCurrentLocation,
     updateObjectState,
-} from './object.js'
+} from "./object.js"
 
 export function getTheBird(bird) {
-    if (bird.currentState === 'birdForestUncaged') {
+    if (bird.currentState === "birdForestUncaged") {
         destroyObject(bird)
         return messages.birdCrap
     }
-    if (bird.currentState !== 'birdCaged') {
-        if (!isObjectInInventory('cage')) return messages.cannotCarry
-        if (isObjectInInventory('rod')) return messages.birdEvades
-        updateObjectState(bird.id, 'birdCaged')
-        addObjectToInventory('bird')
+    if (bird.currentState !== "birdCaged") {
+        if (!isObjectInInventory("cage")) return messages.cannotCarry
+        if (isObjectInInventory("rod")) return messages.birdEvades
+        updateObjectState(bird.id, "birdCaged")
+        addObjectToInventory("bird")
         return messages.okMan
     }
 
@@ -23,12 +23,13 @@ export function getTheBird(bird) {
 }
 
 export function cageTheBird(cage, instruction) {
-    const bird = getObjectFromCurrentLocation('bird')
+    const bird = getObjectFromCurrentLocation("bird")
     if (!bird) return messages.doWhat(instruction)
 
-    if (bird.currentState !== 'birdCaged' && isObjectInInventory('rod')) return messages.birdEvades
+    if (bird.currentState !== "birdCaged" && isObjectInInventory("rod"))
+        return messages.birdEvades
 
-    if (bird.currentState === 'birdCaged') addObjectToInventory('bird')
-    addObjectToInventory('cage')
+    if (bird.currentState === "birdCaged") addObjectToInventory("bird")
+    addObjectToInventory("cage")
     return messages.okMan
 }
